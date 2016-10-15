@@ -27,7 +27,7 @@ var iftttKey = process.argv[2];
 // The name of the event sent to the IFTTT Maker channel.
 // We read the event name as a command line argument. Note that the first
 // argument has the index 2 (0 is always 'node', 1 is the script name).
-var iftttEventName = process.argv[3];
+var iftttDoorBellEventName = process.argv[3];
 
 // We use the device MAC address to identify the right door bell, just in case 
 // there are multiple DoorBell20 devices implementing the door bell service.
@@ -42,16 +42,29 @@ var doorBellServiceUUID = '451e0001dd1c4f20a42eff91a53d2992';
 var doorBellAlarmCharUUID = '451e0002dd1c4f20a42eff91a53d2992';
 var localtimeCharUUID = '451e0003dd1c4f20a42eff91a53d2992';
 
-
 // BLE/GATT objects. 
 var doorBellPeripheral = null;
 var doorBellService = null;
 var doorBellAlarmChar = null;
 var doorBellLocaltimeChar = null;
 
+// If the master cannot connect to the peripheral for this amount of time
+// in milliseconds, we assume a permanent error like empty peripheral 
+// batteries. After a timeout, the client will terminate.
+var disconnectionWarningDelay = 1000*60*10; // 10 minutes
+var disconnectionWarningTimeout = setTimeout(onDisconnectionTimeout, 
+					     disconnectionWarningDelay);
+
+function onDisconnectionTimeout() {
+    console.log('Disconnection timeout.');
+
+    // Bail out since we are not able to connect to peripheral.
+    process.exit(-1);
+}
+
 noble.on('stateChange', function(state) {
     if (state === 'poweredOn') {
-	// Before scanning, we must for the device to be powered on. 
+	// Before scanning, we must wait for the device to be powered on. 
 	console.log('Scanning started.');
 	noble.startScanning([doorBellServiceUUID], false);
     } else {
@@ -65,13 +78,13 @@ function notifyIFTTT(dateStr) {
     var body = JSON.stringify({ "value1" : dateStr, "value2" : "", 
 				"value3" : "" });
 
-    // Request is sent as HTTP Post request.
+    // Request is sent as HTTPS Post request.
     // The URL has the format:
     // https://maker.ifttt.com/trigger/{event}/with/key/{key}
     var httpOptions = {
 	hostname: 'maker.ifttt.com',
 	port: 443,
-	path: '/trigger/' + iftttEventName + "/with/key/" + iftttKey,
+	path: '/trigger/' + iftttDoorBellEventName + "/with/key/" + iftttKey,
 	method: 'POST',
 	headers: {
 	    'Content-Type': 'application/json',
@@ -124,6 +137,9 @@ function onCharDiscovered(err, characteristics) {
 			'characteristic.');
 	} else {
 	    console.log('Subscribed to door bell alarm characteristic.');
+	    // Stop disconnection timer to avoid disconnection timeout
+	    // while actually being connected.
+	    clearTimeout(disconnectionWarningTimeout);
 	}
     });
 }
@@ -141,7 +157,11 @@ function onServicesDiscovered(err, services) {
 
 function onPeripheralDisconnected() {
     console.log('Disconnected');
-    process.exit(-1);
+
+    // Start disconnection timer to detect permanent problems in re-connecting
+    // to the peripheral.
+    disconnectionWarningTimeout = setTimeout(onDisconnectionTimeout, 
+					     disconnectionWarningDelay);
 }
 
 function onPeripheralConnected(err)  {

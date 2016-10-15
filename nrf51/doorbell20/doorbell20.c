@@ -185,7 +185,7 @@ static void die()
  
      // In a development system, we loop forever.
      // Remove the endless loop in a productive system to auto-reset.
-     while (1);
+     //while (1);
      
      // In a productive system, we automatically reset the system on errors.
      sd_nvic_SystemReset();

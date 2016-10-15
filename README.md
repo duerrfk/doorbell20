@@ -1,12 +1,16 @@
-# IFTTT Client
+# What is DoorBell20?
 
-In directory `client/ifttt` you find a [nodejs](https://nodejs.org/) client for the [If This Then That (IFTTT)](https://ifttt.com/) platform. With this client, you can use door bell alarms as event triggers in IFTTT. 
+# DoorBell20 Device
 
-This client subscribes for BLE notifications using the nodejs [noble library](https://github.com/sandeepmistry/noble). Whenever a notification for a door bell alarm is received, a web request is sent to the IFTTT maker channel triggering an event named `door_bell_alarm`. You can then define your own IFTTT recipes to decide what to do with this event, for instance, showing a notification on your smartphone through the IFTTT app. 
+# IFTTT DoorBell20 Client
+
+In directory `client/ifttt` you find a [nodejs](https://nodejs.org/) client for the [If This Then That (IFTTT)](https://ifttt.com/) platform. With this client, you can use door bell alarm events as triggers in IFTTT. IFTTT then offers you a broad choice of actions such as showing a notification on your smartphone, playing a sound on your phone, or sending a tweet to Twitter (if that makes sense to you). You could also trigger other IoT devices like an IP camera making a picture of the person standing at the door. 
+
+The IFTTT DoorBell20 client subscribes for BLE notifications using the nodejs library [noble](https://github.com/sandeepmistry/noble). Whenever a notification for a door bell alarm is received, a web request is sent to the IFTTT maker channel triggering an event with a pre-defined name such as `door_bell_alarm`. You can then define your own IFTTT recipes to decide what to do with this event like showing a notification on your smartphone through the IFTTT app. 
 
 ## Prerequisites
 
-The IFTTT client relies on the following software to be installed:
+The IFTTT client relies on the following software to be installed on the BLE client machine (your IoT gateway):
 
 * nodejs (tested with nodejs version 4.6.0)
 * noble
@@ -50,7 +54,7 @@ The client can be started like this:
 $ sudo node doorbell20-client-ifttt.js 'ABCDEFGHIJK1234567890' 'doorbell_home' 'f3:23:0d:4c:ce:1b'
 ```
 
-Argument `ABCDEFGHIJK1234567890` is the key of your IFTTT Maker channelm which you get when you register with this channel through the IFTTT web interface or app.
+Argument `ABCDEFGHIJK1234567890` is the key of your IFTTT Maker channel (obviously here a bogus one), which you get when you register with the Maker channel through the IFTTT web interface or app.
 
 Argument `doorbell_home` is the name of the generated events. You can send many different events to your Maker channel, e.g., from your door bell, from your smoke detector (hopefully not so often), etc. The event name defines, which event has been fired.
 
@@ -81,4 +85,3 @@ The client subscribes to BLE/GATT notifications of the door bell alarm character
 The following image shows a notification displayed by the IFTTT Android app.
 
 ![IFTTT Door Bell Notification](/images/DoorBell20-IFTTTClient.png)
-

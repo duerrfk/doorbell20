@@ -24,10 +24,16 @@ var https = require('https');
 // argument has the index 2 (0 is always 'node', 1 is the script name).
 var iftttKey = process.argv[2];
 
-// The name of the event sent to the IFTTT Maker channel.
+// The name of the event sent to the IFTTT Maker channel for a door bell alarm.
 // We read the event name as a command line argument. Note that the first
 // argument has the index 2 (0 is always 'node', 1 is the script name).
-var iftttDoorBellEventName = process.argv[3];
+var iftttDoorBellEventName = process.argv[4];
+
+// The name of the event sent to the IFTTT Maker channel if the door bell
+// sensor fails (connection timeout).
+// We read the event name as a command line argument. Note that the first
+// argument has the index 2 (0 is always 'node', 1 is the script name).
+var iftttFailureEventName = process.argv[5];
 
 // We use the device MAC address to identify the right door bell, just in case 
 // there are multiple DoorBell20 devices implementing the door bell service.
@@ -35,7 +41,7 @@ var iftttDoorBellEventName = process.argv[3];
 // Format is like this: 'f3:23:0d:4c:ce:1b';
 // Note that the first argument has the index 2 (0 is always 'node', 1 is the 
 // script name).
-var doorBellDeviceMAC = process.argv[4];
+var doorBellDeviceMAC = process.argv[3];
 
 // BLE/GATT UUIDs.
 var doorBellServiceUUID = '451e0001dd1c4f20a42eff91a53d2992';
@@ -51,15 +57,47 @@ var doorBellLocaltimeChar = null;
 // If the master cannot connect to the peripheral for this amount of time
 // in milliseconds, we assume a permanent error like empty peripheral 
 // batteries. After a timeout, the client will terminate.
-var disconnectionWarningDelay = 1000*60*10; // 10 minutes
-var disconnectionWarningTimeout = setTimeout(onDisconnectionTimeout, 
-					     disconnectionWarningDelay);
+var connectionTimeout = 1000*60*1; // 10 minutes
+var connectionTimeoutTimer = setTimeout(onConnectionTimeout, 
+					connectionTimeout);
 
-function onDisconnectionTimeout() {
-    console.log('Disconnection timeout.');
+function notifyIFTTTFailure() {
+    // Can send up to three values formated as JSON document in request body.
+    var body = JSON.stringify({ "value1" : "Door Bell (" + doorBellDeviceMAC + 
+				")", "value2" : "", "value3" : "" });
+
+    // Request is sent as HTTPS Post request.
+    // The URL has the format:
+    // https://maker.ifttt.com/trigger/{event}/with/key/{key}
+    var httpOptions = {
+	hostname: 'maker.ifttt.com',
+	port: 443,
+	path: '/trigger/' + iftttFailureEventName + "/with/key/" + iftttKey,
+	method: 'POST',
+	headers: {
+	    'Content-Type': 'application/json',
+	    'Content-Length': Buffer.byteLength(body)
+	}
+    };
+
+    var req = https.request(httpOptions, function(res) {
+	console.log('HTTP request to IFTTT Maker channel. Request status: ' + 
+		    res.statusCode);
+	// Exit client after we sent failure notification.
+	process.exit(-1);
+    });
+    req.on('error', function(e) {
+	console.log('HTTP request error: ' + e.message);
+    });
+    req.write(body);
+    req.end();
+}
+
+function onConnectionTimeout() {
+    console.log('Connection timeout.');
 
     // Bail out since we are not able to connect to peripheral.
-    process.exit(-1);
+    notifyIFTTTFailure();
 }
 
 noble.on('stateChange', function(state) {
@@ -139,7 +177,7 @@ function onCharDiscovered(err, characteristics) {
 	    console.log('Subscribed to door bell alarm characteristic.');
 	    // Stop disconnection timer to avoid disconnection timeout
 	    // while actually being connected.
-	    clearTimeout(disconnectionWarningTimeout);
+	    clearTimeout(connectionTimeoutTimer);
 	}
     });
 }
@@ -160,8 +198,8 @@ function onPeripheralDisconnected() {
 
     // Start disconnection timer to detect permanent problems in re-connecting
     // to the peripheral.
-    disconnectionWarningTimeout = setTimeout(onDisconnectionTimeout, 
-					     disconnectionWarningDelay);
+    connectionTimeoutTimer = setTimeout(onConnectionTimeout, 
+					connectionTimeout);
 }
 
 function onPeripheralConnected(err)  {

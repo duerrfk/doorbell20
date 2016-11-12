@@ -38,7 +38,7 @@ The following images show the DoorBell20 monitoring device, and its connection t
 
 The main features of DoorBell20 are:
 
-* Open-source software and hardware. Source code for the app and door bell monitoring device as well as Eagle files (schematic and board layout) are provided.
+* Open-source software and hardware. Source code for the door bell monitoring device and IFTTT client as well as Eagle files (schematic and board layout) are provided.
 * Maker-friendly: using easily available cheap standard components (nRF51822 BLE chip, standard electronic parts), easy to manufacture circuit board, and open-source software and hardware design.
 * Includes a client for the popular and versatile If This Then That (IFTTT) service to facilitate the development of IoT applications integrating DoorBell20. 
 * Liberal licensing of software and hardware under the Apache License 2.0 and the CERN Open Hardware License 1.0, respectively.
@@ -107,6 +107,7 @@ Rebooting after flashing:
 
 ```
 nrfjprog -r
+```
 
 # IFTTT DoorBell20 Client
 

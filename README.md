@@ -111,7 +111,7 @@ nrfjprog -r
 
 # IFTTT DoorBell20 Client
 
-DoorBell20 can be connected to any BLE client running on a remote machine. After receiveing a BLE notification about a door bell event, the client can then trigger local actions or---as done here---can forward the event to a remote IoT cloud service. Here we forward events to the popular [If This Then That (IFTTT)](https://ifttt.com/) cloud service.
+DoorBell20 can be connected to any BLE client running on a remote machine. After receiveing a BLE notification about a door bell event, the client can then trigger local actions, and can forward the event to a remote IoT cloud service. DoorBell20 comes with a client for connecting to the popular [If This Then That (IFTTT)](https://ifttt.com/) cloud service.
 
 You find the [nodejs](https://nodejs.org/) implementation of the IFTTT client in directory `client/ifttt`. With this client, you can use door bell alarm events as triggers for IFTTT. IFTTT offers you a broad choice of actions such as showing a notification on your smartphone when the bell rings, playing a sound on your phone, or sending a tweet to Twitter (if that makes sense to you). You could also trigger other IoT devices like an IP camera making a picture of the one standing at the door. 
 

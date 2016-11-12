@@ -5,7 +5,7 @@ Door Bell 2.0 (or DoorBell20 for short) is a Bluetooth Low Energy (BLE) applianc
 DoorBell20 consists for two major parts:
 
 * The DoorBell20 monitoring device, which is connected in parallel to the door bell and wirelessly via BLE to a client running on a remote IoT gateway, e.g., a Raspberry Pi with Bluetooth stick.
-* A client running on the IoT gateway that passes on notifications received via BLE to a remote cloud service. Different clients can be implemented for different IoT cloud services. So far, DoorBell20 includes a client for [If This Then That (IFTTT)](https://ifttt.com), which makes it very easy to trigger different actions when a door bell event is detected. For instance, a notification can be sent to a mobile phone or trigger an IP camera installed at the door to take pictures.
+* A DoorBell20 client running on the IoT gateway passing on notifications received via BLE to a remote cloud service. Different clients can be implemented for different IoT cloud services. So far, DoorBell20 includes a client for [If This Then That (IFTTT)](https://ifttt.com), which makes it very easy to trigger different actions when a door bell event is detected. For instance, a notification can be sent to a mobile phone or trigger an IP camera installed at the door to take pictures.
 
 ```
                   [IoT Cloud Service]
@@ -31,6 +31,11 @@ DoorBell20 consists for two major parts:
                  (    12 VAC    )
 ```  
 
+The following images show the DoorBell20 monitoring device, and its connection to a door bell.
+
+![DoorBell20 Monitoring Device](/images/doorbell20_monitoring_device2.jpg)
+![DoorBell20 Monitoring Device](/images/door_bell_and_doorbell20.jpg)
+
 The main features of DoorBell20 are:
 
 * Open-source software and hardware. Source code for the app and door bell monitoring device as well as Eagle files (schematic and board layout) are provided.
@@ -45,6 +50,7 @@ The main features of DoorBell20 are:
 The following images show the DoorBell20 hardware and schematic.
 
 ![DoorBell20 Monitoring Device](/images/doorbell20_monitoring_device1.jpg)
+![DoorBell20 Monitoring Device](/images/doorbell20_monitoring_device2.jpg)
 ![DoorBell20 Schematic](/images/doorbell20_monitoring_device_schematic.png)
 
 The DoorBell20 monitoring device is based on the BLE chip [nRF51822](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF51822) by Nordic Semiconductors. The nRF51822 features an ARM Cortex M0 processor implementing both, the application logic and the BLE stack (so-called softdevice). DoorBell20 uses the S110 softdevice version 8.0. See next sub-section on how to flash the softdevice and the application code. We use a so-called "Bluetooth 4.0" breakout boards with an nRF51822 (version 3, variant AA w/ 16 kB of RAM and 256 kB flash memory) and two 2x9 connectors (2 mm pitch), which you can buy over the Internet for about 6 US$ including shipping.

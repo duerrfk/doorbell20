@@ -57,7 +57,7 @@ var doorBellLocaltimeChar = null;
 // If the master cannot connect to the peripheral for this amount of time
 // in milliseconds, we assume a permanent error like empty peripheral 
 // batteries. After a timeout, the client will terminate.
-var connectionTimeout = 1000*60*1; // 10 minutes
+var connectionTimeout = 1000*60*10; // 10 minutes
 var connectionTimeoutTimer = setTimeout(onConnectionTimeout, 
 					connectionTimeout);
 

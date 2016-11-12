@@ -31,10 +31,11 @@ DoorBell20 consists for two major parts:
                  (    12 VAC    )
 ```  
 
-The following images show the DoorBell20 monitoring device, and its connection to a door bell.
+The following images show the DoorBell20 monitoring device, its connection to a door bell, and a door bell event notification displayed by the If This Then That (IFTTT) app on a mobile phone. 
 
 ![DoorBell20 Monitoring Device](/images/doorbell20_monitoring_device2.jpg)
 ![DoorBell20 Monitoring Device](/images/door_bell_and_doorbell20.jpg)
+![IFTTT Door Bell Notification](/images/DoorBell20-IFTTTClient.png)
 
 The main features of DoorBell20 are:
 
